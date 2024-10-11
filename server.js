@@ -1,13 +1,17 @@
 const express = require('express');
 const { exec } = require('child_process'); // Use exec to run CLI commands
 const cors = require('cors');
-const app = express();
+require('dotenv').config();  // Load environment variables
 
+const app = express();
 app.use(cors());
 
 app.get('/speedtest', (req, res) => {
+    // Use environment variable for the speedtest CLI command
+    const speedtestCommand = process.env.SPEEDTEST_COMMAND || 'speedtest --format=json';
+    
     // Execute the speedtest CLI command
-    exec('speedtest --format=json', (error, stdout, stderr) => {
+    exec(speedtestCommand, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error executing speedtest: ${error.message}`);
             return res.status(500).json({ error: 'Speed test failed to execute' });
